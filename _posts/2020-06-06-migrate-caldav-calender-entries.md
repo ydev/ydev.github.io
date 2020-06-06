@@ -2,7 +2,7 @@
 layout: post
 title: migrate caldav calender entries
 subtitle: 
-tags: [caldav]
+tags: [caldav, webdav, sogo, nextcloud]
 ---
 
 How to copy calendars from one service to another? 
@@ -55,6 +55,6 @@ done
 ```
 
 References
-* https://uriesk.wordpress.com/2015/02/13/backup-your-caldav-calendar-with-cadaver/
-* https://sites.google.com/a/case.edu/hpcc/installed-software/file-transfer/cadaver-using-box-hpc
-* https://relentlesscoding.com/2017/10/15/import-contacts-vcards-into-nextcloud/
+* <https://uriesk.wordpress.com/2015/02/13/backup-your-caldav-calendar-with-cadaver/>
+* <https://sites.google.com/a/case.edu/hpcc/installed-software/file-transfer/cadaver-using-box-hpc>
+* <https://relentlesscoding.com/2017/10/15/import-contacts-vcards-into-nextcloud/>

@@ -9,7 +9,6 @@ How to copy calendars from one service to another?
 In this case from [sogo](https://sogo.nu/) (which is still open source but now paid for releases) to [nextcloud](https://nextcloud.com/).
 As source I use the sogo postgres database and copy the calendar entries using [cadaver](http://webdav.org/cadaver/) as webdav client to nextclouds webdav interface.
 
-
 For caldav login create a ~/.netrc file.
 ```
 machine nextcloud.domain.net login nextcloud_user password nextcloud_password
@@ -26,11 +25,11 @@ Add all calendars which should be migrated to the calendars variable. Deleted en
 ```bash
 #!/bin/bash
 
-declare -A calendars=(["sogo_source_calendar_db_table"]="nextcloud_destination_calendar")
+declare -A calendars=(["sogo_source_calendar_db_table"]="nextcloud_username/nextcloud_destination_calendar")
 
 src_db=sogo
-dest_url=http://nextcloud.domain.net/remote.php/dav/calendars
-username=nextcloud_user
+dest_url=https://nextcloud.domain.net/remote.php/dav/calendars
+# for contacts use: dest_url=https://nextcloud.domain.net/remote.php/dav/addressbooks/users
 
 for cal in "${!calendars[@]}" ; do
   src=$cal
@@ -41,14 +40,16 @@ for cal in "${!calendars[@]}" ; do
   echo "No of items to export: $count"
   mkdir -p $dest
   cd $dest
+  rm *
   for((i=0;i<$count;i++)); do
     sudo -u postgres psql -d $src_db -t -A -c "select c_content from $src where c_deleted is null limit 1 offset $i" > $(cat /proc/sys/kernel/random/uuid)-imported.ics
   done
   echo "No of items exported: $(ls | wc -w)"
   for f in *.ics; do sed -i 's/COUNT=0;//g' $f; done # fix reocurring event parameter
+  for f in *.ics; do sed -i '/^PHOTO/d' $f && sed -i '/^ /d' $f; done # remove base64 photo
 
   echo "Import $src to calendar $dest"
-  echo -e "cd $username/$dest\nmput *" | cadaver $dest_url
+  echo -e "cd $dest\nmput *" | cadaver $dest_url
 
   cd ..
 done
